@@ -6,6 +6,7 @@ import { api } from '../services/api';
 import { SchemeCard } from '../components/scheme/SchemeCard';
 import { Button } from '../components/common/Button';
 import { Search, Filter, ShieldCheck, RefreshCw } from 'lucide-react';
+import { scoreScheme } from '../utils/search';
 
 export const Results = () => {
   const navigate = useNavigate();
@@ -24,6 +25,11 @@ export const Results = () => {
   const [selectedState, setSelectedState] = useState('');
   const [matchFilter, setMatchFilter] = useState<'all' | 'STRONG_MATCH' | 'POSSIBLE_MATCH'>('all');
   const [availableStates, setAvailableStates] = useState<string[]>([]);
+
+  // Sync search state when querySearch parameter changes
+  useEffect(() => {
+    setSearch(querySearch);
+  }, [querySearch]);
 
   useEffect(() => {
     setLoading(true);
@@ -48,7 +54,7 @@ export const Results = () => {
 
   // Compute displayed schemes and their match status
   const displayedItems = useMemo(() => {
-    let items: { scheme: Scheme; matchType?: MatchType; matchReasons?: string[] }[] = [];
+    let items: { scheme: Scheme; matchType?: MatchType; matchReasons?: string[]; searchScore?: number }[] = [];
 
     if (hasEvaluated && matchedResults.length > 0) {
       items = matchedResults.map((m) => ({
@@ -64,19 +70,6 @@ export const Results = () => {
       items = allSchemes.map((scheme) => ({
         scheme,
       }));
-    }
-
-    // Search query filter
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      items = items.filter(
-        (it) =>
-          it.scheme.scheme_name.toLowerCase().includes(q) ||
-          it.scheme.short_title.toLowerCase().includes(q) ||
-          it.scheme.tags.toLowerCase().includes(q) ||
-          it.scheme.categories.toLowerCase().includes(q) ||
-          it.scheme.description.toLowerCase().includes(q)
-      );
     }
 
     // Category filter
@@ -99,6 +92,17 @@ export const Results = () => {
       }
     }
 
+    // Search query filter with fuzzy matching and relevance ranking
+    if (search.trim()) {
+      items = items
+        .map((it) => ({
+          ...it,
+          searchScore: scoreScheme(it.scheme, search),
+        }))
+        .filter((it) => (it.searchScore ?? 0) > 0)
+        .sort((a, b) => (b.searchScore ?? 0) - (a.searchScore ?? 0));
+    }
+
     return items;
   }, [allSchemes, matchedResults, hasEvaluated, matchFilter, search, selectedCategory, selectedState]);
 
@@ -106,34 +110,34 @@ export const Results = () => {
   const possibleMatchesCount = matchedResults.filter((m) => m.matchType === 'POSSIBLE_MATCH').length;
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#E8E6E1] py-10 px-4 sm:px-6 lg:px-8 text-[#0F1A2B]">
       <div className="max-w-7xl mx-auto">
         {/* Results Page Header */}
         <div className="mb-8">
           {hasEvaluated ? (
-            <div className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-3xl p-6 sm:p-8 shadow-md">
+            <div className="bg-gradient-to-r from-[#0F1A2B] via-[#1C2E4A] to-[#0F1A2B] text-white rounded-3xl p-6 sm:p-8 shadow-md border border-[#52677D]/30">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold mb-2">
                     <ShieldCheck className="w-4 h-4 text-emerald-400" />
                     Evaluated by Eligibility Engine
                   </div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold">
+                  <h1 className="text-2xl sm:text-3xl font-serif font-extrabold text-[#D1CFC9]">
                     Your Potential Matches
                   </h1>
-                  <p className="text-xs sm:text-sm text-blue-200 mt-1">
+                  <p className="text-xs sm:text-sm text-[#D1CFC9]/80 mt-1">
                     We found <strong>{matchedResults.length}</strong> matching schemes based on your questionnaire profile.
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="px-4 py-2 bg-white/10 rounded-xl text-center">
-                    <div className="text-xs text-blue-200">Strong Matches</div>
+                  <div className="px-4 py-2 bg-white/10 rounded-xl text-center border border-white/10">
+                    <div className="text-xs text-[#D1CFC9]/80">Strong Matches</div>
                     <div className="text-xl font-extrabold text-emerald-400">{strongMatchesCount}</div>
                   </div>
-                  <div className="px-4 py-2 bg-white/10 rounded-xl text-center">
-                    <div className="text-xs text-blue-200">Possible Matches</div>
-                    <div className="text-xl font-extrabold text-amber-400">{possibleMatchesCount}</div>
+                  <div className="px-4 py-2 bg-white/10 rounded-xl text-center border border-white/10">
+                    <div className="text-xs text-[#D1CFC9]/80">Possible Matches</div>
+                    <div className="text-xl font-extrabold text-amber-300">{possibleMatchesCount}</div>
                   </div>
                   <Button
                     variant="secondary"
@@ -147,12 +151,12 @@ export const Results = () => {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#BDC4D4]">
               <div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                <h1 className="text-2xl sm:text-3xl font-serif font-extrabold text-[#0F1A2B]">
                   Government Schemes Directory
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-600 mt-1">
+                <p className="text-xs sm:text-sm text-[#52677D] mt-1">
                   Explore all active Central and State government welfare programs.
                 </p>
               </div>
@@ -167,15 +171,15 @@ export const Results = () => {
         </div>
 
         {/* Filter and Search Bar */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs mb-8 flex flex-col md:flex-row items-center gap-4">
-          <div className="relative flex-1 w-full">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+        <div className="bg-[#F5F3EE] rounded-2xl border border-[#BDC4D4] p-4 sm:p-5 shadow-xs mb-6 flex flex-col md:flex-row items-center gap-4 transition-all">
+          <div className="relative flex-1 w-full group">
+            <Search className="w-4 h-4 text-[#52677D] group-focus-within:text-[#0F1A2B] transition-colors duration-200 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search schemes by title, keywords, benefits..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#EBE8E1] border border-[#BDC4D4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#52677D] focus:bg-[#FAF9F6] text-[#0F1A2B] transition-all duration-200"
             />
           </div>
 
@@ -185,7 +189,7 @@ export const Results = () => {
               <select
                 value={matchFilter}
                 onChange={(e) => setMatchFilter(e.target.value as any)}
-                className="p-2 text-xs border border-slate-200 rounded-xl bg-slate-50 font-semibold text-slate-700"
+                className="p-2.5 text-xs border border-[#BDC4D4] rounded-xl bg-[#EBE8E1] font-semibold text-[#0F1A2B] focus:outline-none focus:ring-2 focus:ring-[#52677D] transition-all cursor-pointer"
               >
                 <option value="all">All Matches</option>
                 <option value="STRONG_MATCH">🟢 Strong Match Only</option>
@@ -197,7 +201,7 @@ export const Results = () => {
             <select
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
-              className="p-2 text-xs border border-slate-200 rounded-xl bg-slate-50 font-semibold text-slate-700"
+              className="p-2.5 text-xs border border-[#BDC4D4] rounded-xl bg-[#EBE8E1] font-semibold text-[#0F1A2B] focus:outline-none focus:ring-2 focus:ring-[#52677D] transition-all cursor-pointer"
             >
               <option value="">All States / Central</option>
               <option value="Central">Central Only</option>
@@ -210,25 +214,38 @@ export const Results = () => {
           </div>
         </div>
 
+        {/* Results Counter Badge */}
+        {!loading && (
+          <div className="flex items-center justify-between mb-6 animate-fade-in">
+            <div className="text-xs font-semibold text-[#0F1A2B]/80 bg-[#EBE8E1] border border-[#BDC4D4] px-3.5 py-2 rounded-xl transition-all duration-200 inline-flex items-center gap-2 shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-[#52677D]"></span>
+              <span>
+                Showing <strong className="text-[#0F1A2B] transition-all">{displayedItems.length}</strong> {displayedItems.length === 1 ? 'scheme' : 'schemes'}
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Results Grid */}
         {loading ? (
-          <div className="p-16 text-center text-sm text-slate-500">Loading results...</div>
+          <div className="p-16 text-center text-sm text-[#52677D] animate-pulse">Loading results...</div>
         ) : displayedItems.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayedItems.map((item) => (
+            {displayedItems.map((item, index) => (
               <SchemeCard
                 key={item.scheme.slug}
                 scheme={item.scheme}
                 matchType={item.matchType}
                 matchReasons={item.matchReasons}
+                staggerIndex={index}
               />
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center max-w-md mx-auto">
-            <Filter className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <h3 className="font-bold text-slate-800 text-base mb-1">No Schemes Found</h3>
-            <p className="text-xs text-slate-500 mb-6">
+          <div className="bg-[#F5F3EE] rounded-3xl border border-[#BDC4D4] p-12 text-center max-w-md mx-auto">
+            <Filter className="w-12 h-12 text-[#52677D]/40 mx-auto mb-3" />
+            <h3 className="font-serif font-bold text-[#0F1A2B] text-base mb-1">No Schemes Found</h3>
+            <p className="text-xs text-[#52677D] mb-6">
               No government schemes matched your filter conditions. Try clearing filters or taking the questionnaire.
             </p>
             <Button

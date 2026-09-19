@@ -223,14 +223,34 @@ export const SchemeDetailModal = ({
             >
               Close
             </button>
-            <a
-              href="https://www.myscheme.gov.in"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold shadow-sm transition-colors"
-            >
-              Official Portal <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+            {scheme.applyUrl ? (
+              <a
+                href={scheme.applyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold shadow-sm transition-colors cursor-pointer"
+              >
+                {scheme.applicationType === 'form' ? 'Application Form' : 'Apply on Official Website'}{' '}
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            ) : scheme.officialWebsite ? (
+              <a
+                href={scheme.officialWebsite}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold shadow-sm transition-colors cursor-pointer"
+              >
+                Official Portal <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            ) : (
+              <button
+                disabled
+                aria-disabled="true"
+                className="flex items-center gap-1.5 px-4 py-2 bg-slate-200 text-slate-500 rounded-lg text-sm font-semibold cursor-not-allowed pointer-events-none select-none"
+              >
+                Online Application Unavailable
+              </button>
+            )}
           </div>
         </div>
       </div>

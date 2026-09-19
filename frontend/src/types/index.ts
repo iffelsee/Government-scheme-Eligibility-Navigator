@@ -19,6 +19,11 @@ export interface Scheme {
   documents: string;
   references: string;
   faqs: string;
+  applyUrl?: string;
+  officialWebsite?: string;
+  guidelinesUrl?: string;
+  applicationType?: 'online' | 'form' | 'portal' | 'offline';
+  isApplicationAvailable?: boolean;
 }
 
 export type MatchType = 'STRONG_MATCH' | 'POSSIBLE_MATCH';
@@ -42,6 +47,12 @@ export interface QuestionnaireAnswers {
   isDisability: boolean;
   isBPL: boolean;
   categoryInterest?: string;
+  isGovernmentEmployee?: boolean;
+  isPrivateEmployee?: boolean;
+  isEntrepreneur?: boolean;
+  isDailyWage?: boolean;
+  isUnemployed?: boolean;
+  isArtisan?: boolean;
 }
 
 export interface QuestionOption {

@@ -15,41 +15,41 @@ export const HeroBanner = ({
   setSearchQuery,
 }: HeroBannerProps) => {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-blue-950 via-slate-900 to-indigo-950 text-white py-12 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
-      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    <div className="relative overflow-hidden bg-gradient-to-br from-[#0F1A2B] via-[#1C2E4A] to-[#0F1A2B] text-[#D1CFC9] py-12 px-4 sm:px-6 lg:px-8 border-b border-[#52677D]/30">
+      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#BDC4D4_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
       <div className="max-w-5xl mx-auto text-center relative z-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 text-xs font-medium mb-4">
-          <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-[#BDC4D4]/30 text-[#D1CFC9] text-xs font-medium mb-4">
+          <Sparkles className="w-3.5 h-3.5 text-[#BDC4D4]" />
           Single Window Access to Welfare Schemes & Subsidies
         </div>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
           Find Government Schemes <br className="hidden sm:block" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-emerald-400">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#BDC4D4] via-[#D1CFC9] to-[#BDC4D4]">
             Tailored For You & Your Family
           </span>
         </h1>
 
-        <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto mb-8">
+        <p className="text-[#D1CFC9]/80 text-sm sm:text-base max-w-2xl mx-auto mb-8 font-light">
           Navigate financial assistance, scholarships, agricultural subsidies, training, and healthcare benefits. Answer a few questions to see your exact eligibility.
         </p>
 
         {/* Big Search Bar on Mobile / Hero */}
         <div className="max-w-2xl mx-auto mb-8 flex flex-col sm:flex-row items-center gap-3">
           <div className="relative flex-1 w-full">
-            <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-5 h-5 text-[#BDC4D4]/60 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by keywords (e.g. stipend, kisan, scholarship, housing)..."
-              className="w-full pl-11 pr-4 py-3 bg-white/10 text-white placeholder-slate-400 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white/20 text-sm"
+              className="w-full pl-11 pr-4 py-3 bg-white/10 text-white placeholder-[#BDC4D4]/60 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#BDC4D4] focus:bg-white/20 text-sm"
             />
           </div>
           <button
             onClick={onCheckEligibility}
-            className="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-sm transition-all shadow-lg hover:shadow-emerald-600/30 flex items-center justify-center gap-2 shrink-0"
+            className="w-full sm:w-auto px-6 py-3 bg-[#52677D] hover:bg-[#1C2E4A] text-[#D1CFC9] font-semibold rounded-xl text-sm transition-all shadow-lg flex items-center justify-center gap-2 shrink-0 border border-[#BDC4D4]/30"
           >
             <CheckCircle2 className="w-4 h-4" />
             Eligibility Check
@@ -57,21 +57,21 @@ export const HeroBanner = ({
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto pt-4 border-t border-white/10 text-slate-300 text-xs sm:text-sm">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto pt-4 border-t border-white/10 text-[#BDC4D4] text-xs sm:text-sm">
           <div className="flex items-center justify-center gap-2">
-            <Award className="w-4 h-4 text-blue-400" />
+            <Award className="w-4 h-4 text-[#BDC4D4]" />
             <span><strong>{totalSchemes}+</strong> Schemes Indexed</span>
           </div>
           <div className="flex items-center justify-center gap-2">
-            <BookOpen className="w-4 h-4 text-emerald-400" />
+            <BookOpen className="w-4 h-4 text-[#BDC4D4]" />
             <span><strong>Central & State</strong> Portals</span>
           </div>
           <div className="flex items-center justify-center gap-2">
-            <Users className="w-4 h-4 text-amber-400" />
+            <Users className="w-4 h-4 text-[#BDC4D4]" />
             <span><strong>All Demographics</strong> Supported</span>
           </div>
           <div className="flex items-center justify-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-sky-400" />
+            <CheckCircle2 className="w-4 h-4 text-[#BDC4D4]" />
             <span><strong>Instant</strong> Evaluation</span>
           </div>
         </div>

@@ -4,11 +4,11 @@ import { Landmark, ShieldAlert, Sparkles, ExternalLink } from 'lucide-react';
 
 export const Footer = () => {
   return (
-    <footer className="bg-[#142842] text-[#CFC8BE] text-xs border-t border-[#1E3A5F] mt-auto">
+    <footer className="bg-[#0F1A2B] text-[#D1CFC9] text-xs border-t border-[#52677D]/30 mt-auto">
       {/* Official Disclaimer Banner */}
-      <div className="bg-[#0e1c2e] border-b border-[#1E3A5F] py-3 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 text-center text-[#CFC8BE] text-xs font-sans tracking-wide">
-          <ShieldAlert className="w-4 h-4 shrink-0 text-[#CFC8BE]" />
+      <div className="bg-[#1C2E4A] border-b border-[#52677D]/30 py-3 px-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 text-center text-[#D1CFC9] text-xs font-sans tracking-wide">
+          <ShieldAlert className="w-4 h-4 shrink-0 text-[#D1CFC9]" />
           <span>
             Independent citizen eligibility guide. Always verify terms and apply through official portals (e.g. myscheme.gov.in, india.gov.in).
           </span>
@@ -20,19 +20,19 @@ export const Footer = () => {
           {/* Brand Column */}
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-white">
-              <div className="w-8 h-8 rounded-lg bg-[#1E3A5F] border border-[#CFC8BE]/30 flex items-center justify-center text-white font-bold">
+              <div className="w-8 h-8 rounded-lg bg-[#1C2E4A] border border-[#BDC4D4]/30 flex items-center justify-center text-[#D1CFC9] font-bold">
                 <Landmark className="w-4 h-4" />
               </div>
-              <span className="font-serif font-bold text-base tracking-tight text-white">Scheme Navigator</span>
+              <span className="font-serif font-bold text-base tracking-tight text-[#D1CFC9]">Scheme Navigator</span>
             </div>
-            <p className="text-[#CFC8BE]/80 text-xs leading-relaxed">
+            <p className="text-[#D1CFC9]/80 text-xs leading-relaxed">
               Empowering citizens across all 28 States and 8 UTs to evaluate eligibility and discover government welfare programs.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-sans font-semibold text-white text-xs uppercase tracking-widest mb-3">
+            <h4 className="font-sans font-semibold text-[#BDC4D4] text-xs uppercase tracking-widest mb-3">
               Explore
             </h4>
             <ul className="space-y-2">
@@ -61,7 +61,7 @@ export const Footer = () => {
 
           {/* Key Sectors */}
           <div>
-            <h4 className="font-sans font-semibold text-white text-xs uppercase tracking-widest mb-3">
+            <h4 className="font-sans font-semibold text-[#BDC4D4] text-xs uppercase tracking-widest mb-3">
               Key Sectors
             </h4>
             <ul className="space-y-2">
@@ -90,7 +90,7 @@ export const Footer = () => {
 
           {/* Official Portals */}
           <div>
-            <h4 className="font-sans font-semibold text-white text-xs uppercase tracking-widest mb-3">
+            <h4 className="font-sans font-semibold text-[#BDC4D4] text-xs uppercase tracking-widest mb-3">
               Official Resources
             </h4>
             <ul className="space-y-2">
@@ -128,12 +128,12 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="pt-8 mt-8 border-t border-[#1E3A5F] flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-[#A9A094] text-[11px]">
+        <div className="pt-8 mt-8 border-t border-[#52677D]/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-[#D1CFC9]/60 text-[11px]">
             © {new Date().getFullYear()} Government Scheme Eligibility Navigator. Designed with precision & clarity.
           </p>
-          <div className="flex items-center gap-2 text-[#CFC8BE] text-[11px]">
-            <Sparkles className="w-3.5 h-3.5 text-[#CFC8BE]" />
+          <div className="flex items-center gap-2 text-[#BDC4D4] text-[11px]">
+            <Sparkles className="w-3.5 h-3.5 text-[#BDC4D4]" />
             <span>Digital India & Open Governance</span>
           </div>
         </div>

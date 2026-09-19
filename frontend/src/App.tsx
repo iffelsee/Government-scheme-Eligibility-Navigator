@@ -19,7 +19,7 @@ export function App() {
     <AuthProvider>
       <SavedSchemesProvider>
         <BrowserRouter>
-          <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900">
+          <div className="min-h-screen bg-[#E8E6E1] flex flex-col font-sans text-[#0F1A2B] antialiased selection:bg-[#BDC4D4] selection:text-[#0F1A2B]">
             <Navbar />
             <main className="flex-1">
               <Routes>

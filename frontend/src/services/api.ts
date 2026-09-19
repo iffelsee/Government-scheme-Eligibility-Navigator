@@ -2,8 +2,9 @@
 import type { Scheme, MatchResult, QuestionnaireAnswers, CategoryInfo, Question } from '../types';
 import rawSchemes from '../data/schemes.json';
 import { evaluateEligibilityEngine } from './mockEngine';
+import { resolveSchemeUrls } from '../utils/schemeUrls';
 
-const schemes = rawSchemes as Scheme[];
+const schemes = (rawSchemes as Scheme[]).map(resolveSchemeUrls);
 
 const CATEGORIES_DATA: CategoryInfo[] = [
   {
@@ -143,9 +144,16 @@ export const api = {
 
   // Get popular schemes by category
   async getPopularSchemesByCategory(categorySlug: string): Promise<Scheme[]> {
-    const term = categorySlug.replace(/-/g, ' ').toLowerCase();
-    const filtered = schemes.filter(s => s.categories.toLowerCase().includes(term));
+    const words = categorySlug.split('-').filter(w => w !== 'and');
+    const filtered = schemes.filter(s => words.some(w => s.categories.toLowerCase().includes(w)));
     return Promise.resolve(filtered.slice(0, 6));
+  },
+
+  // Get all schemes by category
+  async getSchemesByCategory(categorySlug: string): Promise<Scheme[]> {
+    const words = categorySlug.split('-').filter(w => w !== 'and');
+    const filtered = schemes.filter(s => words.some(w => s.categories.toLowerCase().includes(w)));
+    return Promise.resolve(filtered);
   },
 
   // Get question definitions
@@ -169,6 +177,25 @@ export const api = {
   // Get featured schemes for homepage
   async getFeaturedSchemes(): Promise<Scheme[]> {
     return Promise.resolve(schemes.slice(0, 6));
+  },
+
+  // Get curated flagship schemes across varied sectors for the homepage carousel
+  async getCarouselSchemes(): Promise<Scheme[]> {
+    const selectedSlugs = [
+      'ab-pmjay',       // Health & Wellness: Ayushman Bharat
+      'aaby',           // Social Welfare: Aam Aadmi Bima Yojana
+      'aay-goa',        // Housing & Shelter: Atal Asra Yojana
+      'aabssobpmbos',   // Agriculture: Advanced Animal Breeding Scheme
+      '15dsugt',        // Skills & Employment: 15 Days Skill Up-gradation Training
+      'a-pudu',         // Women & Child: ARAVANAIPPU
+      'aaelss',         // Education & Banking: Assam Abhinandan Education Loan Subsidy
+      '25-ciss',        // Business & Entrepreneurship: 25% Capital Investment Subsidy
+    ];
+    const found = selectedSlugs
+      .map(slug => schemes.find(s => s.slug === slug))
+      .filter(Boolean) as Scheme[];
+
+    return Promise.resolve(found.length > 0 ? found : schemes.slice(0, 8));
   },
 
   // Get all unique states

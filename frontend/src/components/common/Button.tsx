@@ -16,7 +16,7 @@ export const Button: FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer tracking-wide';
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-offset-1 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 cursor-pointer tracking-wide';
 
   const sizeStyles = {
     sm: 'px-3 py-1.5 text-xs gap-1.5',
@@ -25,11 +25,11 @@ export const Button: FC<ButtonProps> = ({
   }[size];
 
   const variantStyles = {
-    primary: 'bg-[#1E3A5F] hover:bg-[#142842] text-white focus:ring-[#1E3A5F] shadow-sm hover:shadow',
-    secondary: 'bg-[#F7F5F2] hover:bg-[#EFECE7] text-[#1E3A5F] border border-[#CFC8BE] focus:ring-[#CFC8BE]',
-    outline: 'border border-[#CFC8BE] hover:bg-[#F7F5F2] text-[#374151] focus:ring-[#CFC8BE]',
-    ghost: 'hover:bg-[#F7F5F2] text-[#374151] focus:ring-[#E5E7EB]',
-    success: 'bg-[#059669] hover:bg-[#047857] text-white focus:ring-[#059669] shadow-sm hover:shadow',
+    primary: 'bg-[#0F1A2B] hover:bg-[#1C2E4A] text-[#D1CFC9] focus:ring-[#52677D] shadow-sm hover:shadow hover:-translate-y-0.5 active:translate-y-0',
+    secondary: 'bg-[#52677D] hover:bg-[#435567] text-[#D1CFC9] border border-[#52677D] focus:ring-[#BDC4D4] hover:-translate-y-0.5 active:translate-y-0',
+    outline: 'border border-[#52677D] hover:bg-[#BDC4D4]/30 text-[#0F1A2B] focus:ring-[#52677D] hover:-translate-y-0.5 active:translate-y-0',
+    ghost: 'hover:bg-[#BDC4D4]/30 text-[#0F1A2B] focus:ring-[#BDC4D4]',
+    success: 'bg-[#0F1A2B] hover:bg-[#1C2E4A] text-[#D1CFC9] border border-[#BDC4D4]/40 focus:ring-[#52677D] shadow-sm hover:shadow hover:-translate-y-0.5 active:translate-y-0',
   }[variant];
 
   return (

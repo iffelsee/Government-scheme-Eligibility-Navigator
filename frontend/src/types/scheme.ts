@@ -19,6 +19,11 @@ export interface Scheme {
   documents: string;
   references: string;
   faqs: string;
+  applyUrl?: string;
+  officialWebsite?: string;
+  guidelinesUrl?: string;
+  applicationType?: 'online' | 'form' | 'portal' | 'offline';
+  isApplicationAvailable?: boolean;
 }
 
 export interface EligibilityProfile {
@@ -32,4 +37,10 @@ export interface EligibilityProfile {
   isFarmer: boolean;
   isDisability: boolean;
   isBPL: boolean;
+  isGovernmentEmployee?: boolean;
+  isPrivateEmployee?: boolean;
+  isEntrepreneur?: boolean;
+  isDailyWage?: boolean;
+  isUnemployed?: boolean;
+  isArtisan?: boolean;
 }

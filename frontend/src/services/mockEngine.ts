@@ -73,6 +73,36 @@ export function evaluateEligibilityEngine(answers: QuestionnaireAnswers): MatchR
       reasons.push('Assistive support for Persons with Disabilities (PwD)');
     }
 
+    if (answers.isGovernmentEmployee && (text.includes('government employee') || text.includes('civil servant') || text.includes('public servant') || text.includes('govt employee') || text.includes('central government') || text.includes('state government employee') || text.includes('government service'))) {
+      score += 35;
+      reasons.push('Dedicated welfare, pension, or housing benefits for government employees');
+    }
+
+    if (answers.isPrivateEmployee && (text.includes('private sector') || text.includes('salaried') || text.includes('employee') || text.includes('corporate') || text.includes('epf') || text.includes('esi') || text.includes('worker'))) {
+      score += 30;
+      reasons.push('Provisions for salaried & private sector workforce');
+    }
+
+    if (answers.isEntrepreneur && (text.includes('business') || text.includes('entrepreneur') || text.includes('msme') || text.includes('startup') || text.includes('self-employed') || text.includes('enterprise') || text.includes('mudra'))) {
+      score += 35;
+      reasons.push('Business funding, MSME subsidies, or entrepreneurial grants');
+    }
+
+    if (answers.isDailyWage && (text.includes('construction') || text.includes('daily wage') || text.includes('unorganized') || text.includes('worker') || text.includes('informal') || text.includes('e-shram') || text.includes('labour'))) {
+      score += 35;
+      reasons.push('Social security and welfare for unorganized & construction workers');
+    }
+
+    if (answers.isUnemployed && (text.includes('unemployed') || text.includes('job seeker') || text.includes('skill') || text.includes('training') || text.includes('apprenticeship') || text.includes('employment'))) {
+      score += 35;
+      reasons.push('Skill enhancement, training stipends, or employment assistance');
+    }
+
+    if (answers.isArtisan && (text.includes('artisan') || text.includes('weaver') || text.includes('craftsperson') || text.includes('vishwakarma') || text.includes('handicraft') || text.includes('handloom'))) {
+      score += 40;
+      reasons.push('Special incentives & toolkit subsidies for artisans and traditional craftspersons');
+    }
+
     if (answers.isBPL && (text.includes('bpl') || text.includes('poverty') || text.includes('ration card') || text.includes('economically weaker') || text.includes('antyodaya'))) {
       score += 30;
       reasons.push('Priority welfare for BPL / low-income households');

@@ -26,7 +26,7 @@ export const MatchBadge: FC<MatchBadgeProps> = ({ type }) => {
 
 export const SectorBadge: FC<{ label: string }> = ({ label }) => {
   return (
-    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-[#F7F5F2] text-[#374151] border border-[#E5E7EB]">
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-[#EBE8E1] text-[#0F1A2B] border border-[#BDC4D4]">
       {label}
     </span>
   );
