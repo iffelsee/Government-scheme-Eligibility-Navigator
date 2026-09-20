@@ -3,9 +3,6 @@ dist/
 node_modules/
 build/
 
-# Excluded backend and large datasets
-backend/
-structured.csv
 
 # TypeScript build cache
 *.tsbuildinfo

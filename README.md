@@ -1,204 +1,204 @@
 # 🏛️ Government Scheme Eligibility Navigator (योजना पात्रता मार्गदर्शक)
 
-A production-grade, citizen-centric web application built with **React 19**, **Vite 8**, **TypeScript**, **Tailwind CSS v4**, and **React Router v7**. The platform guides Indian citizens through an intuitive questionnaire to discover government welfare schemes, subsidies, educational grants, and agricultural incentives for which they qualify.
+A comprehensive, citizen-centric web platform and API designed to bridge the awareness and accessibility gap in government welfare distribution. The platform empowers Indian citizens to discover welfare schemes, educational scholarships, healthcare subsidies, housing grants, and agricultural incentives tailored specifically to their socio-economic profile.
 
 ---
 
 ## 📑 Table of Contents
-1. [Core Architectural Principle](#-core-architectural-principle)
-2. [Complete Frontend Folder Tree](#-complete-frontend-folder-tree)
-3. [File & Directory Breakdown](#-file--directory-breakdown)
-4. [Design System & UI Theme](#-design-system--ui-theme)
-5. [Page Flows & Application Routes](#-page-flows--application-routes)
-6. [Key Features & Fixes](#-key-features--fixes)
-7. [Installation & Setup Guide](#-installation--setup-guide)
-8. [Available Scripts](#-available-scripts)
-9. [Eligibility Engine API Contract](#-eligibility-engine-api-contract)
+1. [Overview](#-overview)
+2. [Key Features](#-key-features)
+3. [Technology Stack](#-technology-stack)
+4. [Complete Project Structure](#-complete-project-structure)
+5. [Installation & Setup Guide](#-installation--setup-guide)
+6. [Running the Frontend](#-running-the-frontend)
+7. [Running the Backend](#-running-the-backend)
+8. [Frontend ↔ Backend Architecture](#-frontend--backend-architecture)
+9. [Dataset](#-dataset)
+10. [Scheme Application Links](#-scheme-application-links)
+11. [Project Architecture](#-project-architecture)
+12. [Development & Code Quality](#-development--code-quality)
+13. [Build & Verification](#-build--verification)
+14. [GitHub Repository Structure](#-github-repository-structure)
+15. [License & Disclaimer](#-license--disclaimer)
 
 ---
 
-## ⚡ Core Architectural Principle
+## 🌟 Overview
 
-> **Rule: The frontend never decides eligibility directly.**
+Millions of Indian citizens remain unaware of government welfare programs and subsidies designed for their empowerment. The **Government Scheme Eligibility Navigator** solves this by organizing fragmented welfare information into an intuitive, accessible, and structured digital platform.
 
-- **Separation of Concerns**: All eligibility logic is delegated to the API service layer (`src/services/api.ts` backed by `src/services/mockEngine.ts` / NestJS backend).
-- The frontend UI collects user answers through a multi-step questionnaire, presents progress bars, and sends the profile to the engine.
-- The engine calculates whether a scheme is a:
-  - 🟢 **Strong Match** (`STRONG_MATCH`) — Meets primary criteria with high confidence.
-  - 🟡 **Possible Match** (`POSSIBLE_MATCH`) — Partially qualifies or requires minimal secondary verification.
-  - ⚪ **No Match** — Excluded from recommendations.
-- The engine returns explicit `matchReasons` (e.g., *"Citizen is an active farmer with < 2 hectares land"*), which are rendered directly on results and scheme detail pages under **"Why this matches you"**.
+Citizens can discover schemes across key sectors:
+- **Housing & Shelter** (e.g., pucca house construction subsidies, affordable urban housing loans, sanitation assistance)
+- **Education & Learning** (e.g., pre-matric/post-matric scholarships, fee concessions, hostel aid, loan interest subsidies)
+- **Agriculture & Rural** (e.g., crop insurance, direct farmer income support, seeds, fertilizers, and irrigation subsidies)
+- **Healthcare & Wellness** (e.g., medical insurance, tertiary treatment coverage, maternal care, free generic medicines)
+- **Women and Child Welfare** (e.g., direct cash assistance, nutrition programs, motherhood support, girl child education)
+- **Skills & Employment** (e.g., vocational training stipends, free toolkits, startup seed funds, job placement assistance)
+- **Banking & Finance** (e.g., collateral-free business loans, zero-balance savings, pension plans, accident insurance)
+- **Social Welfare & Empowerment** (e.g., disability stipends, senior citizen pensions, community empowerment)
 
----
-
-## 📂 Complete Frontend Folder Tree
+### Eligibility & Discovery Workflow
 
 ```text
-frontend/
-├── .gitignore                     # Git ignore rules for Vite & Node
-├── .oxlintrc.json                 # Oxlint high-performance linter configuration
-├── index.html                     # HTML entry point with Google Fonts preloads
-├── package.json                   # Frontend dependencies, scripts, and metadata
-├── package-lock.json              # Locked dependency tree
-├── README.md                      # Frontend-specific documentation
-├── tsconfig.app.json              # TypeScript configuration for application code
-├── tsconfig.json                  # Root TypeScript reference config
-├── tsconfig.node.json             # TypeScript config for Vite configuration files
-├── vite.config.ts                 # Vite bundler configuration with Tailwind plugin
-│
-├── public/                        # Static public assets
-│   ├── favicon.svg                # Government Ashoka/Emblem-style SVG favicon
-│   └── icons.svg                  # SVG sprite sheet
-│
-└── src/                           # Application source code
-    ├── App.css                    # Global application styles
-    ├── App.tsx                    # Main App router and layout wrapper
-    ├── index.css                  # Tailwind CSS v4 setup and custom @theme tokens
-    ├── main.tsx                   # React 19 DOM bootstrap & entry point
-    │
-    ├── assets/                    # Static image & vector assets
-    │   ├── hero.png               # Hero banner background graphic
-    │   ├── react.svg              # React logo
-    │   └── vite.svg               # Vite logo
-    │
-    ├── components/                # Reusable UI component library
-    │   ├── category/              # Category-specific components
-    │   │   └── CategoryCard.tsx   # Category presentation card with icon & scheme counter
-    │   │
-    │   ├── common/                # Shared atomic & structural components
-    │   │   ├── Badge.tsx          # Status, category, and match-level badges
-    │   │   ├── Button.tsx         # Primary, secondary, outline, and text button variants
-    │   │   ├── Footer.tsx         # Comprehensive government-style footer
-    │   │   ├── Navbar.tsx         # Sticky navigation bar with search & user actions
-    │   │   └── ProgressBar.tsx    # Multi-step progress indicator for questionnaires
-    │   │
-    │   ├── scheme/                # Scheme-specific UI components
-    │   │   └── SchemeCard.tsx     # Scheme preview card (Match level, tags, details link)
-    │   │
-    │   ├── EligibilityWizard.tsx  # Interactive inline eligibility assessment wizard
-    │   ├── FilterSidebar.tsx      # Sidebar for filtering schemes (State, beneficiary, etc.)
-    │   ├── HeroBanner.tsx         # Homepage hero banner with quick call-to-action
-    │   └── SchemeDetailModal.tsx  # Quick-view modal dialog for scheme details
-    │
-    ├── context/                   # React Context Providers for global state
-    │   ├── AuthContext.tsx        # Authentication state (user session, login, logout)
-    │   └── SavedSchemesContext.tsx# Bookmarked schemes state with localStorage sync
-    │
-    ├── data/                      # Local datasets
-    │   └── schemes.json           # 101 structured schemes parsed & cleaned from master CSV
-    │
-    ├── pages/                     # Routed view pages
-    │   ├── Categories.tsx         # Browse all scheme categories with search & filter
-    │   ├── CategoryDetail.tsx     # Schemes filtered by selected category
-    │   ├── Dashboard.tsx          # User profile dashboard with saved schemes & activity
-    │   ├── Home.tsx               # Homepage (Hero, Category grid, How it works, Stats)
-    │   ├── Login.tsx              # User login authentication page
-    │   ├── Questionnaire.tsx      # 4-step eligibility questionnaire with progress bar
-    │   ├── Register.tsx           # User registration page
-    │   ├── Results.tsx            # Matched results (Strong / Possible matches + reasons)
-    │   └── SchemeDetails.tsx      # Deep-dive scheme view (Benefits, docs, process, apply)
-    │
-    ├── services/                  # Business logic & API communication layer
-    │   ├── api.ts                 # Service layer delegating questions, schemes & evaluation
-    │   └── mockEngine.ts          # Deterministic eligibility evaluation engine
-    │
-    ├── types/                     # TypeScript type definitions & interfaces
-    │   ├── index.ts               # Core types (Scheme, MatchResult, Answers, User, etc.)
-    │   └── scheme.ts              # Extended legacy scheme interface compatibility
-    │
-    └── utils/                     # Helper functions & utility libraries
-        └── formatText.ts          # HTML tag cleaner & sequential list renumbering
+┌─────────────────────────┐
+│     Citizen Profile     │  Demographics: Age, Gender, State, Social Category,
+│      Questionnaire      │  Annual Income, Profile/Occupation (Farmer, Student, etc.)
+└───────────┬─────────────┘
+            │
+            ▼
+┌─────────────────────────┐
+│   Eligibility Engine    │  Evaluates income ceilings, age bounds, social categories,
+│   (Service / Backend)   │  state residency, and occupation rules against catalog
+└───────────┬─────────────┘
+            │
+            ▼
+┌─────────────────────────┐
+│     Matched Results     │  🟢 Strong Matches: Meets primary criteria with high confidence
+│      & Explanations     │  🟡 Possible Matches: Partially qualifies / secondary review
+└───────────┬─────────────┘
+            │
+            ▼
+┌─────────────────────────┐
+│ Scheme Dossier & Action │  Benefits, required documents, step-by-step application
+│  Verified Portals/Links │  process, and validated direct application/portal links
+└─────────────────────────┘
 ```
 
 ---
 
-## 🔍 File & Directory Breakdown
+## ✨ Key Features
 
-### 1. `src/pages/` (View Layer)
-| File | Description |
-| :--- | :--- |
-| `Home.tsx` | Landing page featuring the hero section, quick search, categorized scheme grids, "How it Works" guide, and official trust badges. |
-| `Categories.tsx` | Comprehensive category directory displaying scheme counts, search filtering, and quick navigation. |
-| `CategoryDetail.tsx` | Filtered scheme listing for a specific category (e.g., Agriculture, Education, Healthcare). |
-| `Questionnaire.tsx` | 4-step interactive citizen profile questionnaire (Demographics, Location & Income, Occupation & Status, Needs). Includes back/forward navigation and live progress tracking. |
-| `Results.tsx` | Displays calculated scheme recommendations segmented into **Strong Matches** and **Possible Matches**, showing exact reasons why each scheme fits. |
-| `SchemeDetails.tsx` | Complete scheme dossier: summary, eligibility criteria, benefits, step-by-step application instructions, required documentation, and direct official portal links. |
-| `Dashboard.tsx` | Citizen dashboard displaying bookmarked schemes, completed assessments, and saved profile criteria. |
-| `Login.tsx` / `Register.tsx` | Clean authentication screens for user account creation and session sign-in. |
-
-### 2. `src/components/` (Component Library)
-- **`common/Navbar.tsx`**: Header navigation featuring national emblem branding, route navigation links, saved schemes count badge, and user authentication toggle.
-- **`common/Footer.tsx`**: Official-style portal footer with emergency helplines, Quick Links, Categories, and government disclaimer.
-- **`common/Button.tsx`**: Accessible button component supporting `primary`, `secondary`, `outline`, and `ghost` variants with loading states.
-- **`common/Badge.tsx`**: Semantic tag component for Central/State labels, Strong Match (green), Possible Match (yellow), and categories.
-- **`common/ProgressBar.tsx`**: Step-based progress tracker indicating current step, step labels, and percent completed.
-- **`scheme/SchemeCard.tsx`**: High-information scheme card displaying scheme title, ministry/state, brief summary, match badge, tags, and bookmark toggle.
-- **`category/CategoryCard.tsx`**: Grid card for scheme domains with icon, title, description, and badge indicator.
-
-### 3. `src/services/` (Service & Evaluation Layer)
-- **`api.ts`**: The abstracted API boundary. All components communicate through this module. It handles fetching scheme catalogs, retrieving specific schemes, loading questions, and submitting citizen profiles for evaluation.
-- **`mockEngine.ts`**: Standalone evaluation engine simulating server-side eligibility determination. It evaluates income limits, age bounds, occupation matching (farmer, student, worker), disability status, and state residence to produce match scores and explanation statements.
-
-### 4. `src/context/` (Application State)
-- **`AuthContext.tsx`**: Manages current user session (`currentUser`), login/register mock methods, and state persistence in `localStorage`.
-- **`SavedSchemesContext.tsx`**: Manages citizen scheme bookmarks (add, remove, check status) synchronized with browser `localStorage`.
-
-### 5. `src/utils/` (Sanitization & Formatting)
-- **`formatText.ts`**: 
-  - `cleanHtml(text)`: Eliminates raw HTML tags (such as `<br>`, `&nbsp;`, `<span>`) scraped from government data sources.
-  - `renumberLists(text)`: Converts broken government document lists that repeat `1.` on every row into clean, sequential numbers (`1.`, `2.`, `3.`, ...) while preserving section headers.
+- **Scheme Discovery & Browsing**: Browse hundreds of central and state government schemes categorized by sector with real-time counters.
+- **Fuzzy & Similar Search**: High-performance search utility powered by Levenshtein edit distance and tokenized text matching (`frontend/src/utils/search.ts`) with stop-word filtering to find relevant schemes even with typos or partial keywords.
+- **Category Browsing**: Detailed category pages showing all associated schemes, summaries, and eligibility criteria.
+- **Multi-Dimensional Scheme Filters**:
+  - **Level Filtering**: Central vs. State schemes.
+  - **State Filtering**: Dynamic dropdown filtering by individual Indian states and union territories.
+  - **Beneficiary & Category Filtering**: Filter by target beneficiaries (e.g., Students, Farmers, Women, Senior Citizens, Artisans).
+- **Eligibility Questionnaire**: 4-step guided questionnaire capturing state, age, gender, social category (General, OBC, SC, ST, EWS), annual income band, and special occupational status.
+- **Intelligent Scheme Matching**: Multi-criteria matching engine returning match status (`STRONG_MATCH` vs `POSSIBLE_MATCH`), match score, and transparent **"Why this matches you"** explanations alongside missing criteria.
+- **Detailed Scheme Dossiers**: Deep-dive pages (`/scheme/:slug`) detailing scheme objectives, quantifiable benefits, eligibility criteria, step-by-step application procedures, and required documentation.
+- **Scheme-Specific Application Links**:
+  - Distinguishes between direct online forms/applications, official department portals, and procedural guidelines.
+  - Validates against known broken/404 URLs.
+  - Handles schemes where online applications are unavailable by providing clear offline procedure instructions.
+  - Avoids blind redirection to generic aggregate portals (such as MyScheme) when verified department URLs exist.
+- **Homepage Scheme Carousel**: Interactive flagship scheme carousel with auto-play, pause-on-hover, next/previous buttons, and indicator dots (`frontend/src/components/scheme/SchemeCarousel.tsx`).
+- **Engaging UI Animations & Count-Up Statistics**: Animated numeric counters for citizen counts and scheme metrics (`frontend/src/components/common/CountUp.tsx`).
+- **Responsive Government Portal UI Design**: Mobile-first, fully responsive design adhering to official government typography (`Playfair Display` + `Plus Jakarta Sans`) and color palette (`#1E3A5F` Navy Blue, `#CFC8BE` Warm Greige).
+- **Bookmarks / Saved Schemes**: Citizen dashboard with local persistence for saving and tracking schemes of interest.
+- **Backend & API Layer**: NestJS backend providing extensible modular endpoints, and an abstracted frontend API client (`frontend/src/services/api.ts`).
+- **Master Dataset**: Includes structured datasets (`schemes.json` in frontend and `structured.csv` master dataset) representing extensive scheme records.
 
 ---
 
-## 🎨 Design System & UI Theme
+## 🛠️ Technology Stack
 
-The UI follows a professional, trustworthy government portal design system.
+### Frontend
+- **React**: `19.2.8` — Component-driven user interface library
+- **TypeScript**: `~6.0.2` — Strict type safety across components, models, and services
+- **Vite**: `^8.3.0` — Next-generation frontend build tooling and development server
+- **Tailwind CSS**: `^4.3.3` (with `@tailwindcss/vite`) — Utility-first styling and custom theme variables
+- **React Router DOM**: `^7.18.4` — Client-side declarative routing
+- **Lucide React**: `^1.46.0` — Clean and consistent iconography
+- **Oxlint**: `^1.81.0` — High-performance JavaScript/TypeScript linter
 
-### Color Palette
-| Token | Hex Code | Purpose | Preview |
-| :--- | :--- | :--- | :--- |
-| **Navy Blue** | `#1E3A5F` | Primary brand color, headers, primary buttons, active tabs | `rgb(30, 58, 95)` |
-| **Warm Greige** | `#CFC8BE` | Accents, card borders, subtle backgrounds, hero tints | `rgb(207, 200, 190)` |
-| **Crisp White** | `#FFFFFF` | Card backgrounds, main canvas, high-contrast text | `rgb(255, 255, 255)` |
-| **Light Gray** | `#E5E7EB` | Dividers, border lines, inactive button states | `rgb(229, 231, 235)` |
-| **Charcoal** | `#374151` | Primary body typography, subheadings, descriptive text | `rgb(55, 65, 81)` |
-
-### Typography Pairing
-- **Headings & Emphasized Titles**: `'Playfair Display', Georgia, serif`
-  - Conveys authority, clarity, and institutional dignity.
-- **Body & UI Elements**: `'Plus Jakarta Sans', system-ui, sans-serif`
-  - High legibility on mobile and desktop screens across all font sizes.
+### Backend
+- **NestJS**: `^12.0.1` — Progressive Node.js framework for building scalable server applications
+- **Node.js**: `v20.x` / `v24.x` (LTS recommended)
+- **Express**: Platform Express (`@nestjs/platform-express ^12.0.1`)
+- **RxJS**: `^7.8.1` — Reactive programming library
+- **Reflect Metadata**: `^0.2.2` — Decorator metadata reflection
+- **Jest**: `^30.0.0` & `ts-jest` — Testing framework for unit and e2e testing
+- **Oxlint**: `^1.58.0` — Backend linting
+- **Prisma**: `^6.19.3` (`@prisma/client` & `prisma` dev dependency at root) — Database ORM configuration
 
 ---
 
-## 🗺️ Page Flows & Application Routes
+## 📁 Complete Project Structure
 
 ```text
-[ Home (/) ]
-     │
-     ├──► [ All Categories (/categories) ] ──► [ Category Detail (/categories/:id) ]
-     │                                                     │
-     ├──► [ Start Questionnaire (/questionnaire) ]        ▼
-     │            │                               [ Scheme Details (/scheme/:id) ]
-     │            ▼                                        ▲
-     │    [ Results (/results) ] ──────────────────────────┤
-     │       (🟢 Strong Matches / 🟡 Possible Matches)     │
-     │                                                     │
-     ├──► [ Bookmarks (/dashboard) ] ──────────────────────┘
-     │
-     └──► [ Login (/login) ] / [ Register (/register) ]
+Government-scheme-Eligibility-Navigator/
+├── backend/                              # NestJS backend application
+│   ├── src/                              # Backend source code
+│   │   ├── app.controller.spec.ts        # Unit test for AppController
+│   │   ├── app.controller.ts             # Primary REST controller (root endpoint)
+│   │   ├── app.module.ts                 # Root application module
+│   │   ├── app.service.ts                # Application service provider
+│   │   └── main.ts                       # Backend entry point (NestFactory bootstrap, port 3000)
+│   ├── test/                             # End-to-end test suite
+│   │   ├── app.e2e-spec.ts               # E2E integration test
+│   │   └── jest-e2e.json                 # Jest E2E configuration
+│   ├── .oxlintrc.json                    # Backend Oxlint configuration
+│   ├── .prettierrc                       # Code formatting rules
+│   ├── jest.config.ts                    # Jest unit testing configuration
+│   ├── nest-cli.json                     # NestJS CLI project metadata
+│   ├── package.json                      # Backend dependencies and scripts
+│   ├── package-lock.json                 # Backend locked dependency tree
+│   ├── tsconfig.build.json               # TypeScript build configuration
+│   └── tsconfig.json                     # Backend TypeScript compiler configuration
+│
+├── frontend/                             # React + Vite frontend application
+│   ├── public/                           # Static public assets
+│   │   ├── favicon.svg                   # National emblem SVG favicon
+│   │   └── icons.svg                     # SVG sprite definitions
+│   ├── src/                              # Frontend source code
+│   │   ├── assets/                       # Image assets (hero.png, logos)
+│   │   ├── components/                   # Reusable UI component library
+│   │   │   ├── category/                 # Category components (CategoryCard.tsx)
+│   │   │   ├── common/                   # Shared UI (Navbar, Footer, Button, Badge, ProgressBar, CountUp)
+│   │   │   ├── scheme/                   # Scheme UI (SchemeCard, SchemeCarousel, SchemeFilterPanel)
+│   │   │   ├── EligibilityWizard.tsx     # Inline eligibility assessment wizard
+│   │   │   ├── FilterSidebar.tsx         # Sidebar for filtering schemes
+│   │   │   ├── HeroBanner.tsx            # Homepage hero banner
+│   │   │   └── SchemeDetailModal.tsx     # Scheme preview modal
+│   │   ├── context/                      # Global state context
+│   │   │   ├── AuthContext.tsx           # User session and authentication state
+│   │   │   └── SavedSchemesContext.tsx   # Saved schemes state with localStorage sync
+│   │   ├── data/                         # Local dataset
+│   │   │   └── schemes.json              # Cleaned scheme records and metadata (704 KB)
+│   │   ├── pages/                        # View pages
+│   │   │   ├── Categories.tsx            # All categories directory
+│   │   │   ├── CategoryDetail.tsx        # Category-filtered scheme listing
+│   │   │   ├── Dashboard.tsx             # User bookmarks and dashboard
+│   │   │   ├── Home.tsx                  # Landing page (hero, carousel, categories, stats)
+│   │   │   ├── Login.tsx                 # Login page
+│   │   │   ├── Questionnaire.tsx         # 4-step eligibility questionnaire
+│   │   │   ├── Register.tsx              # Registration page
+│   │   │   ├── Results.tsx               # Matched schemes with match reasons
+│   │   │   └── SchemeDetails.tsx         # Deep-dive scheme view with verified links
+│   │   ├── services/                     # Business logic and API client
+│   │   │   ├── api.ts                    # API client layer for schemes, categories, and evaluation
+│   │   │   └── mockEngine.ts             # Deterministic eligibility evaluation engine
+│   │   ├── types/                        # TypeScript type definitions
+│   │   │   ├── index.ts                  # Core types (Scheme, MatchResult, QuestionnaireAnswers, etc.)
+│   │   │   └── scheme.ts                 # Extended scheme interface definitions
+│   │   ├── utils/                        # Utility functions
+│   │   │   ├── formatText.ts             # HTML tag sanitizer and sequential list renumbering
+│   │   │   ├── matcher.ts                # Field matching and criteria evaluation helpers
+│   │   │   ├── schemeUrls.ts             # Intelligent scheme link and portal resolver
+│   │   │   └── search.ts                 # Levenshtein fuzzy search and tokenization
+│   │   ├── App.css                       # Global styles
+│   │   ├── App.tsx                       # Main application router
+│   │   ├── index.css                     # Tailwind CSS v4 setup and theme definitions
+│   │   └── main.tsx                      # Frontend React DOM entry point
+│   ├── .gitignore                        # Frontend Git ignore rules
+│   ├── .oxlintrc.json                    # Frontend Oxlint configuration
+│   ├── index.html                        # HTML template
+│   ├── package.json                      # Frontend dependencies and scripts
+│   ├── package-lock.json                 # Frontend locked dependency tree
+│   ├── README.md                         # Frontend-specific documentation
+│   ├── tsconfig.app.json                 # TypeScript application configuration
+│   ├── tsconfig.json                     # TypeScript reference configuration
+│   ├── tsconfig.node.json                # TypeScript Vite configuration
+│   └── vite.config.ts                    # Vite build configuration with Tailwind plugin
+│
+├── structured.csv                        # Master tabular dataset containing government scheme records (~24 MB)
+├── package.json                          # Root workspace package.json coordinating frontend & backend
+├── package-lock.json                     # Root locked dependency tree
+├── .gitignore                            # Root Git ignore rules
+└── README.md                             # Complete project documentation
 ```
-
----
-
-## ✨ Key Features & Fixes
-
-1. **Strict Eligibility Separation**: Frontend UI never performs inline eligibility decisions; all assessment is performed via `services/api.ts`.
-2. **"Why this matches you" Explanation**: Every result includes custom rationale pills explaining the specific profile rules that matched.
-3. **Data Sanitization**: Scraped government data containing raw `<br>` tags and broken markdown is sanitized automatically via `cleanHtml()`.
-4. **Sequential List Renumbering**: Government CSV document lists formatted with repeated `1.` are dynamically renumbered to `1.`, `2.`, `3.` per section.
-5. **Bookmark Persistence**: Saved schemes persist across browser reloads via `localStorage`.
-6. **Responsive Layout**: Designed for mobile smartphones, tablets, and wide desktop displays.
 
 ---
 
@@ -207,121 +207,216 @@ The UI follows a professional, trustworthy government portal design system.
 ### 1. Prerequisites
 - **Node.js**: `v20.x` or `v24.x` (LTS recommended)
 - **npm**: `v10.x` or `v11.x`
-- **Operating System**: Windows / macOS / Linux
+- **Git**: Installed and configured on your path
 
-> **Windows PowerShell PATH note**: If `node` or `npm` is not recognized after installation, refresh your environment PATH:
-> ```powershell
-> $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-> ```
-
-### 2. Install Dependencies
-From the repository root or inside `frontend/`:
+### 2. Clone the Repository
 ```bash
-# Navigate to frontend folder
-cd frontend
-
-# Install all npm dependencies
-npm install
+git clone https://github.com/iffelsee/Government-scheme-Eligibility-Navigator.git
+cd Government-scheme-Eligibility-Navigator
 ```
 
-### 3. Start Local Development Server
+### 3. Install Dependencies
+You can install dependencies for both frontend and backend directly:
+
 ```bash
+# Install root dependencies
+npm install
+
+# Install frontend dependencies
+cd frontend
+npm install
+cd ..
+
+# Install backend dependencies
+cd backend
+npm install
+cd ..
+```
+
+---
+
+## 💻 Running the Frontend
+
+The frontend is powered by Vite and React 19.
+
+### From the Root Directory:
+```bash
+npm run dev:frontend
+```
+*(or simply `npm run dev`)*
+
+### Or from inside `frontend/`:
+```bash
+cd frontend
 npm run dev
 ```
-Open your browser and visit: **`http://localhost:5173`**
 
-### 4. Build for Production
+- **Local URL**: `http://localhost:5173`
+- **Available Scripts in `frontend/package.json`**:
+  - `npm run dev`: Starts the Vite local development server with hot-module replacement (HMR).
+  - `npm run build`: Runs `tsc -b && vite build` to type-check and compile production static assets to `frontend/dist/`.
+  - `npm run lint`: Runs `oxlint` to perform code quality checks.
+  - `npm run preview`: Previews the compiled production build locally.
+
+---
+
+## ⚙️ Running the Backend
+
+The backend is built with NestJS and runs on Node.js.
+
+### From the Root Directory:
 ```bash
-npm run build
+npm run dev:backend
 ```
-The compiled, production-ready static assets will be output to `frontend/dist/`.
+*(runs `npm -C backend run start:dev`)*
 
-### 5. Preview Production Build
+### Or from inside `backend/`:
 ```bash
-npm run preview
+cd backend
+npm run start:dev
 ```
 
-### 6. Lint Codebase
+- **Local Port / URL**: Runs on `http://localhost:3000` (or `process.env.PORT` if set).
+- **Available Scripts in `backend/package.json`**:
+  - `npm run start`: Starts the NestJS server (`nest start`).
+  - `npm run start:dev`: Starts the server in watch mode with automatic reloads (`nest start --watch`).
+  - `npm run start:debug`: Starts the server in debug mode with watch (`nest start --debug --watch`).
+  - `npm run start:prod`: Runs the compiled production server (`node dist/main`).
+  - `npm run build`: Compiles the TypeScript application using `nest build`.
+  - `npm run lint`: Runs `oxlint --type-aware src/ test/`.
+  - `npm run test`: Runs unit tests via Jest.
+  - `npm run test:e2e`: Runs end-to-end integration tests.
+
+---
+
+## 🔄 Frontend ↔ Backend Architecture
+
+The application is structured to ensure a clean separation between UI presentation and business logic:
+
+1. **Frontend API Service Layer (`frontend/src/services/api.ts`)**:
+   - Acts as the single entry point for all scheme data, category details, question forms, and eligibility evaluations.
+   - Decouples UI components from the underlying data source or backend protocol.
+2. **Current Evaluation Engine**:
+   - `frontend/src/services/api.ts` delegates questionnaire evaluation to `mockEngine.ts`, which deterministically evaluates user demographic answers against scheme eligibility criteria.
+   - Returns match classifications (`STRONG_MATCH`, `POSSIBLE_MATCH`) and explicit reasons explaining why the user qualifies.
+3. **Backend Integration**:
+   - The NestJS backend provides the foundation for serving API endpoints on `http://localhost:3000`.
+   - Root `package.json` includes convenience scripts to run, build, and develop both frontend and backend concurrently or independently.
+
+---
+
+## 📊 Dataset
+
+The project incorporates two levels of scheme data:
+
+1. **`structured.csv` (Project Root)**:
+   - The master tabular dataset (~24 MB, over 250,000 lines of data) containing comprehensive records of Indian government schemes, ministries, eligibility conditions, benefit structures, and application guidelines.
+2. **`frontend/src/data/schemes.json`**:
+   - A structured, cleaned, and normalized JSON dataset (704 KB) derived from the master scheme data.
+   - Contains 100+ fully-indexed schemes with slug identifiers, categories, state associations, detailed benefits, criteria, application processes, and external references.
+   - Powering fast, zero-latency client-side search, category filtering, and instant questionnaire matching.
+
+---
+
+## 🔗 Scheme Application Links
+
+A critical differentiator of the Government Scheme Eligibility Navigator is its intelligent link resolution engine (`frontend/src/utils/schemeUrls.ts`):
+
+- **No Blind Redirection**: The system **does not** indiscriminately redirect every scheme to generic portals (such as MyScheme).
+- **Verified Official Portals**: Extracts and prioritizes verified, scheme-specific portal links and direct application URLs from official ministry references.
+- **Classification of Link Types**:
+  - `online`: Direct digital application portals or registration pages.
+  - `form`: Official downloadable application forms (PDF / Word).
+  - `portal`: Department or ministry information portals.
+  - `offline`: Explicitly marks schemes requiring offline application (e.g., at Gram Panchayat, Taluk office, or District Magistrate office) and details the required steps.
+- **Broken URL Filtering**: Validates URLs against a curated blacklist of known broken/404 government endpoints (`KNOWN_BROKEN_URLS`), falling back to official departmental sites when an exact form URL is unavailable.
+- **Guidelines URLs**: Keeps official operational guideline documents and standard operating procedures (SOPs) distinct from direct application links.
+
+---
+
+## 🏗️ Project Architecture
+
+```text
+┌────────────────────────────────────────────────────────┐
+│                   React 19 Frontend                    │
+│  (Pages: Home, Questionnaire, Categories, Details)     │
+└──────────────────────────┬─────────────────────────────┘
+                           │
+                           ▼
+┌────────────────────────────────────────────────────────┐
+│                   API Client Layer                     │
+│  (frontend/src/services/api.ts + schemeUrls.ts)        │
+└─────────────┬────────────────────────────┬─────────────┘
+              │                            │
+              ▼                            ▼
+┌──────────────────────────┐  ┌──────────────────────────┐
+│  Eligibility Engine      │  │  NestJS Backend Server   │
+│  (mockEngine.ts)         │  │  (Port 3000 REST API)    │
+└─────────────┬────────────┘  └────────────┬─────────────┘
+              │                            │
+              ▼                            ▼
+┌──────────────────────────┐  ┌──────────────────────────┐
+│   frontend/schemes.json  │  │   structured.csv         │
+│   (Normalized JSON)      │  │   (Master Scheme Dataset)│
+└──────────────────────────┘  └──────────────────────────┘
+```
+
+---
+
+## 🛠️ Development & Code Quality
+
+### Linting
+Both frontend and backend utilize `oxlint` for fast code linting:
+
 ```bash
+# Lint frontend
 npm run lint
+
+# Lint backend
+npm -C backend run lint
+```
+
+### Testing
+Backend unit and end-to-end tests:
+
+```bash
+cd backend
+npm run test
+npm run test:e2e
 ```
 
 ---
 
-## 📜 Available Scripts
+## 📦 Build & Verification
 
-| Script | Command | Purpose |
-| :--- | :--- | :--- |
-| `dev` | `vite` | Starts local hot-reloading development server on port 5173 |
-| `build` | `tsc -b && vite build` | Type-checks TypeScript files and bundles static assets |
-| `preview` | `vite preview` | Previews the production build locally |
-| `lint` | `oxlint` | Runs fast Oxlint code quality and React hook checks |
+### Building Frontend
+```bash
+npm run build:frontend
+# or: cd frontend && npm run build
+```
+Executes `tsc -b && vite build`. Output is written to `frontend/dist/`.
+
+### Building Backend
+```bash
+npm run build:backend
+# or: cd backend && npm run build
+```
+Executes `nest build`. Output is written to `backend/dist/`.
 
 ---
 
-## 📡 Eligibility Engine API Contract
+## 🌐 GitHub Repository Structure
 
-### Request: `POST /api/eligibility/evaluate`
-```json
-{
-  "age": 28,
-  "gender": "Female",
-  "state": "Maharashtra",
-  "caste": "OBC",
-  "maritalStatus": "Married",
-  "annualIncome": 180000,
-  "isBpl": true,
-  "employmentStatus": "Self-Employed",
-  "occupation": "Farmer",
-  "isStudent": false,
-  "isFarmer": true,
-  "isDisability": false,
-  "needs": ["financial_assistance", "farming_support"]
-}
-```
-
-### Response: `MatchResult[]`
-```json
-[
-  {
-    "scheme": {
-      "id": "pm-kisan-samman-nidhi",
-      "title": "PM Kisan Samman Nidhi",
-      "category": "Agriculture",
-      "level": "Central",
-      "brief": "Income support of ₹6,000 per year in three equal installments to all landholding farmer families."
-    },
-    "matchLevel": "STRONG_MATCH",
-    "score": 95,
-    "matchReasons": [
-      "Targeted for active farmers",
-      "Annual income within eligible limit",
-      "Valid state residency"
-    ],
-    "missingCriteria": []
-  },
-  {
-    "scheme": {
-      "id": "pm-awas-yojana-gramin",
-      "title": "Pradhan Mantri Awas Yojana - Gramin",
-      "category": "Housing",
-      "level": "Central",
-      "brief": "Financial assistance for construction of pucca houses for homeless and households living in dilapidated houses."
-    },
-    "matchLevel": "POSSIBLE_MATCH",
-    "score": 75,
-    "matchReasons": [
-      "BPL cardholder criterion satisfied",
-      "Income falls in low-income bracket"
-    ],
-    "missingCriteria": [
-      "Verification of house ownership status required"
-    ]
-  }
-]
-```
+The complete repository at [https://github.com/iffelsee/Government-scheme-Eligibility-Navigator](https://github.com/iffelsee/Government-scheme-Eligibility-Navigator) contains:
+- Complete **`frontend/`** application source code, assets, configuration, and dependencies.
+- Complete **`backend/`** application source code, controller, services, tests, and configuration.
+- Master dataset **`structured.csv`** and parsed **`schemes.json`**.
+- Root build, lint, and orchestration scripts in **`package.json`** and **`package-lock.json`**.
+- Fully updated **`README.md`** reflecting the complete multi-tier architecture.
+- Clean **`.gitignore`** excluding only `node_modules/`, `.env` files, build output, and local runtime artifacts.
 
 ---
 
-## 🏛️ License & Disclaimer
-This platform is developed for citizen welfare facilitation. Official scheme rules, funding disbursements, and policy terms remain subject to respective Ministry guidelines and verification.
+## ⚖️ License & Disclaimer
+
+This platform is developed for citizen welfare facilitation and educational purposes. Official scheme rules, funding disbursements, criteria revisions, and policy terms remain subject to respective Central and State Ministry guidelines and verification.
